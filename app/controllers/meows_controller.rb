@@ -14,8 +14,9 @@ class MeowsController < ApplicationController
 
     respond_to do |format|
       if meow.save
+        meows = post.meows.count
         format.html { redirect_to :back, notice: "We heard your Meow!" }
-        format.json { render json: meow }
+        format.json { render json: { meow: meow, count: meows } }
       else
         format.html { redirect_to :back }
         format.json { render json: meow.errors, status: :unprocessable_entity }
@@ -24,6 +25,7 @@ class MeowsController < ApplicationController
   end
 
   def destroy
+    post = Post.find(params[:post_id])
     current_user.meows.destroy(params[:id])
 
     respond_to do |format|
@@ -32,7 +34,9 @@ class MeowsController < ApplicationController
         redirect_to :back
       end
 
-      format.json { head :no_content }
+      count = post.meows.count
+      # { head :no_content } <-- switched with below
+      format.json { render json: count }
     end
   end
 end

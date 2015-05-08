@@ -8,7 +8,11 @@ $(document).ready(function() {
       type: "POST",
       url: $form.attr('action'),
       dataType: "json",
-      success: function(meow) {
+      success: function(data) {
+
+        var meow = data.meow
+        var count = data.count
+
         // Create the String version of the form action
         action = '/posts/' + meow.post_id + '/meows/' + meow.id;
 
@@ -27,6 +31,10 @@ $(document).ready(function() {
 
         // Replace the old create form with the new remove form
         $form.replaceWith($newForm);
+
+        var tense = checkTense(count);
+
+        updateMeows(meow.post_id, count, tense);
       }
     });
   });
@@ -40,7 +48,7 @@ $(document).ready(function() {
       type: "DELETE",
       url: $form.attr('action'),
       dataType: "json",
-      success: function() {
+      success: function(count) {
         // Find the parent wrapper div so that we can use its data-post-id
         $post = $form.closest('[data-post-id]');
 
@@ -62,7 +70,23 @@ $(document).ready(function() {
 
         // Replace the old create form with the new remove form
         $form.replaceWith($newForm);
+
+        var tense = checkTense(count);
+
+        updateMeows($post.data('post-id'), count, tense);
       }
     });
   });
+
+  function checkTense(count) {
+    if (count === 1) {
+      return 'Meow';
+    } else {
+      return 'Meows';
+    }
+  }
+
+  function updateMeows (postId, count, tense) {
+    $('[data-meows-count="' + postId + '"]').html(count + ' ' + tense);
+  }
 });

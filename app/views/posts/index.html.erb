@@ -4,7 +4,9 @@
 
   <div data-post-id="<%= post.id %>">
     <%= image_tag post.image.url %>
-    <%= pluralize(post.meows.count, 'Meow') %>
+    <div data-meows-count="<%= post.id %>">
+      <%= pluralize(post.meows.count, 'Meow') %>
+    </div>
 
     <% if user_signed_in? %>
       <% if post.has_meow_from?(current_user) %>
